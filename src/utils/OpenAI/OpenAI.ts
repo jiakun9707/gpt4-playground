@@ -25,7 +25,7 @@ export const getOpenAICompletion = async (
   const encoder = new TextEncoder();
   const decoder = new TextDecoder();
 
-  const response = await fetch("https://api.openai.com/v1/chat/completions", {
+  const response = await fetch("https://chatgptproxyapi-3jh.pages.dev/v1/chat/completions", {
     headers: {
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",

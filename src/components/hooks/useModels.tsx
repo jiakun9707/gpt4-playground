@@ -17,7 +17,7 @@ export default function useModels() {
 
     const fetchModels = async () => {
       setLoadingModels(true);
-      const models = await fetch("/api/models", {
+      const models = await fetch("https://chatgptproxyapi-3jh.pages.dev/v1/models", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -25,7 +25,9 @@ export default function useModels() {
         },
       })
         .then((res) => res.json())
-        .then((res) => res.chatModels);
+        .then((res) => res.data);
+
+      console.log("models:", models);
 
       setModels(models || []);
       setLoadingModels(false);

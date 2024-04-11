@@ -12,11 +12,14 @@ import {
   OpenAIChatMessage,
   OpenAIConfig,
   OpenAISystemMessage,
-  OpenAIChatModels
+  OpenAIChatModels,
+  getOpenAICompletion,
+  OpenAIRequest
 } from "@/utils/OpenAI";
 import React, { PropsWithChildren, useCallback, useEffect } from "react";
 import { useRouter } from "next/router";
 import { useAuth } from "@/context/AuthProvider";
+
 
 const CHAT_ROUTE = "/";
 
@@ -244,22 +247,59 @@ export default function OpenAIProvider({ children }: PropsWithChildren) {
 
       try {
         const decoder = new TextDecoder();
-        const { body, ok } = await fetch("/api/completion", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            ...config,
-            messages: [systemMessage, ...messages_].map(
-              ({ role, content }) => ({
-                role,
-                content,
-              })
-            ),
-          }),
-        });
+        // const { body, ok } = await fetch("/api/completion", {
+        //   method: "POST",
+        //   headers: {
+        //     "Content-Type": "application/json",
+        //     Authorization: `Bearer ${token}`,
+        //   },
+        //   body: JSON.stringify({
+        //     ...config,
+        //     messages: [systemMessage, ...messages_].map(
+        //       ({ role, content }) => ({
+        //         role,
+        //         content,
+        //       })
+        //     ),
+        //   }),
+        // });
+        console.log("messages", messages);
+
+        let response;
+        if (!messages) {
+          response = new Response("Missing messages", { status: 400 });
+        }
+
+        if (!token) {
+          response = new Response("Missing token", { status: 401 });
+        }
+
+        const total_config = {
+          model: config.model || defaultConfig.model,
+          max_tokens: config.max_tokens || defaultConfig.max_tokens,
+          temperature: config.temperature || defaultConfig.temperature,
+          top_p: config.top_p || defaultConfig.top_p,
+          frequency_penalty: config.frequency_penalty || defaultConfig.frequency_penalty,
+          presence_penalty: config.presence_penalty || defaultConfig.presence_penalty,
+          stream: true,
+          n: 1,
+        };
+      
+        const payload: OpenAIRequest = {
+          ...total_config,
+          messages,
+        };
+
+        try {
+          const stream = await getOpenAICompletion(token, payload);
+          response = new Response(stream);
+        } catch (e: any) {
+          response = new Response(e.message || "Error fetching response.", {
+            status: 500,
+          });
+        }
+
+        const {body, ok} = response;
 
         if (!body) return;
         const reader = body.getReader();
