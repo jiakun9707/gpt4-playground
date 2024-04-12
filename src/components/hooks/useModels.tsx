@@ -41,8 +41,8 @@ export default function useModels() {
         .filter((model) => model in OpenAIChatModels)
         .map((model) => OpenAIChatModels[model as keyof typeof OpenAIChatModels])
         .sort((a, b) => (b.maxLimit || 0) - (a.maxLimit || 0)); // Sort by max limit
-      console.log(chatModels);
-      setModels(chatModels || []);
+
+        setModels(chatModels || []);
       setLoadingModels(false);
     };
 

@@ -247,60 +247,46 @@ export default function OpenAIProvider({ children }: PropsWithChildren) {
 
       try {
         const decoder = new TextDecoder();
-        // const { body, ok } = await fetch("/api/completion", {
-        //   method: "POST",
-        //   headers: {
-        //     "Content-Type": "application/json",
-        //     Authorization: `Bearer ${token}`,
-        //   },
-        //   body: JSON.stringify({
-        //     ...config,
-        //     messages: [systemMessage, ...messages_].map(
-        //       ({ role, content }) => ({
-        //         role,
-        //         content,
-        //       })
-        //     ),
-        //   }),
-        // });
-        console.log("messages", messages);
 
         let response;
-        if (!messages) {
+        if (!messages_ || messages_.length === 0) {
           response = new Response("Missing messages", { status: 400 });
-        }
-
-        if (!token) {
+        } else if (!token) {
           response = new Response("Missing token", { status: 401 });
-        }
-
-        const total_config = {
-          model: config.model || defaultConfig.model,
-          max_tokens: config.max_tokens || defaultConfig.max_tokens,
-          temperature: config.temperature || defaultConfig.temperature,
-          top_p: config.top_p || defaultConfig.top_p,
-          frequency_penalty: config.frequency_penalty || defaultConfig.frequency_penalty,
-          presence_penalty: config.presence_penalty || defaultConfig.presence_penalty,
-          stream: true,
-          n: 1,
-        };
-      
-        const payload: OpenAIRequest = {
-          ...total_config,
-          messages,
-        };
-
-        try {
-          const stream = await getOpenAICompletion(token, payload);
-          response = new Response(stream);
-        } catch (e: any) {
-          response = new Response(e.message || "Error fetching response.", {
-            status: 500,
-          });
+        } else {
+          const total_config = {
+            model: config.model || defaultConfig.model,
+            max_tokens: config.max_tokens || defaultConfig.max_tokens,
+            temperature: config.temperature || defaultConfig.temperature,
+            top_p: config.top_p || defaultConfig.top_p,
+            frequency_penalty: config.frequency_penalty || defaultConfig.frequency_penalty,
+            presence_penalty: config.presence_penalty || defaultConfig.presence_penalty,
+            stream: true,
+            n: 1,
+          };
+        
+          const payload: OpenAIRequest = {
+            ...total_config,
+            messages: [systemMessage, ...messages_].map(
+              ({ role, content }) => ({
+                role,
+                content,
+              })
+            ),
+          };
+  
+          try {
+            const stream = await getOpenAICompletion(token, payload);
+            response = new Response(stream);
+          } catch (e: any) {
+            response = new Response(e.message || "Error fetching response.", {
+              status: 500,
+            });
+          }
         }
 
         const {body, ok} = response;
-
+        
         if (!body) return;
         const reader = body.getReader();
 
@@ -330,7 +316,10 @@ export default function OpenAIProvider({ children }: PropsWithChildren) {
         });
 
         while (!done) {
+          console.log("Reading...", reader);
+          // reader.releaseLock();
           const { value, done: doneReading } = await reader.read();
+          console.log(value, doneReading);
           done = doneReading;
           const chunkValue = decoder.decode(value);
           message.content += chunkValue;
