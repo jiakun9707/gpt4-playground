@@ -327,6 +327,7 @@ export default function OpenAIProvider({ children }: PropsWithChildren) {
           updateMessageContent(message.id as number, message.content);
         }
       } catch (error: any) {
+        console.error(error);
         setMessages((prev) => {
           return [
             ...prev,

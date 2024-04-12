@@ -67,8 +67,16 @@ export const getOpenAICompletion = async (
       }
 
       const parser = createParser(onParse);
-      for await (const chunk of response.body as any) {
-        parser.feed(decoder.decode(chunk));
+      if (response.body === null) {
+        throw new Error("Response body is null");
+      }
+      const reader = response.body.getReader();
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) {
+          break;
+        }
+        parser.feed(decoder.decode(value));
       }
     },
   });
