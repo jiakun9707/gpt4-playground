@@ -9,7 +9,7 @@ import useModels from "../hooks/useModels";
 type Props = {};
 
 export default function ConfigSidebar({}: Props) {
-  const { config, updateConfig } = useOpenAI();
+  const { config, updateConfig, toggleChatbotMode,chatbotMode } = useOpenAI();
   const { models, loadingModels } = useModels();
 
   const handleUpdateConfig = <K extends keyof OpenAIConfig>(
@@ -77,6 +77,12 @@ export default function ConfigSidebar({}: Props) {
         onChange={(value: OpenAIConfig["presence_penalty"]) =>
           handleUpdateConfig("presence_penalty", value)
         }
+      />
+      <ToggleButton 
+        labelOn="Chatbot Mode"
+        labelOff="Module Mode"
+        initialActive={true}
+        onToggle={()=>{toggleChatbotMode();console.info("chatbot mode:", chatbotMode)}}
       />
     </div>
   );

@@ -4,16 +4,11 @@ const PlaygroundContext = React.createContext<{
   showConversations: boolean;
   setShowConversations: (show: boolean) => void;
   toggleShowConversations: () => void;
-  chatbotMode: boolean;
-  setChatbotMode: (mode: boolean) => void;
-  toggleChatbotMode: () => void;
+
 }>({
   showConversations: false,
   setShowConversations: (show: boolean) => {},
   toggleShowConversations: () => {},
-  chatbotMode: false,
-  setChatbotMode: (mode: boolean) => {},
-  toggleChatbotMode: () => {},
 });
 
 export default function PlaygroundProvider(props: PropsWithChildren) {

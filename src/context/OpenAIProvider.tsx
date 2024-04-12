@@ -47,6 +47,9 @@ const defaultContext = {
   submit: () => {},
   loading: true,
   error: "",
+  chatbotMode: false,
+  setChatbotMode: (mode: boolean) => {},
+  toggleChatbotMode: () => {},
 };
 
 const OpenAIContext = React.createContext<{
@@ -74,6 +77,9 @@ const OpenAIContext = React.createContext<{
   submit: () => void;
   loading: boolean;
   error: string;
+  chatbotMode: boolean;
+  setChatbotMode: (mode: boolean) => void;
+  toggleChatbotMode: () => void;
 }>(defaultContext);
 
 export default function OpenAIProvider({ children }: PropsWithChildren) {
@@ -249,6 +255,7 @@ export default function OpenAIProvider({ children }: PropsWithChildren) {
         const decoder = new TextDecoder();
 
         let response;
+
         if (!messages_ || messages_.length === 0) {
           response = new Response("Missing messages", { status: 400 });
         } else if (!token) {
@@ -264,7 +271,14 @@ export default function OpenAIProvider({ children }: PropsWithChildren) {
             stream: true,
             n: 1,
           };
-        
+          
+          if (!chatbotMode) {
+            messages_ = messages.slice(-1);
+            if (messages_[0].role !== "user") {
+              throw new Error("Role should be user.");
+            }
+          } 
+
           const payload: OpenAIRequest = {
             ...total_config,
             messages: [systemMessage, ...messages_].map(
@@ -367,6 +381,12 @@ export default function OpenAIProvider({ children }: PropsWithChildren) {
     [submit]
   );
 
+  const [chatbotMode, setChatbotMode] = React.useState(false);
+
+  const toggleChatbotMode = () => {
+    setChatbotMode(!chatbotMode);
+  };
+
   const value = React.useMemo(
     () => ({
       systemMessage,
@@ -389,6 +409,9 @@ export default function OpenAIProvider({ children }: PropsWithChildren) {
       updateConfig,
       submit,
       error,
+      chatbotMode,
+      setChatbotMode,
+      toggleChatbotMode,
     }),
     [
       systemMessage,
@@ -401,6 +424,7 @@ export default function OpenAIProvider({ children }: PropsWithChildren) {
       conversations,
       clearConversations,
       error,
+      chatbotMode,
     ]
   );
 
