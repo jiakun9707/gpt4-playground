@@ -2,6 +2,13 @@ import { OpenAIChatModels, OpenAIModel } from "@/utils/OpenAI";
 import React from "react";
 import { useAuth } from "@/context/AuthProvider";
 
+interface Model {
+  id: string;
+  object: string;
+  created: number;
+  owned_by: string;
+}
+
 /*
   Simple hook to fetch models from the API
 */
@@ -17,7 +24,7 @@ export default function useModels() {
 
     const fetchModels = async () => {
       setLoadingModels(true);
-      const models = await fetch("https://chatgptproxyapi-3jh.pages.dev/v1/models", {
+      const models: Model[] = await fetch("https://chatgptproxyapi-3jh.pages.dev/v1/models", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -27,9 +34,15 @@ export default function useModels() {
         .then((res) => res.json())
         .then((res) => res.data);
 
-      console.log("models:", models);
+      const models_id = models.map(item => item.id);
 
-      setModels(models || []);
+      // Get the models that can interface with the chat API and return
+      const chatModels = models_id
+        .filter((model) => model in OpenAIChatModels)
+        .map((model) => OpenAIChatModels[model as keyof typeof OpenAIChatModels])
+        .sort((a, b) => (b.maxLimit || 0) - (a.maxLimit || 0)); // Sort by max limit
+      console.log(chatModels);
+      setModels(chatModels || []);
       setLoadingModels(false);
     };
 
