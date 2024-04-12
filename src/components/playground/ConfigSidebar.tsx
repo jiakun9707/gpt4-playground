@@ -2,6 +2,7 @@ import { useOpenAI } from "@/context/OpenAIProvider";
 import React from "react";
 import Dropdown from "../input/Dropdown";
 import Slider from "../input/Slider";
+import ToggleButton from "../input/Button";
 import { OpenAIChatModels, OpenAIConfig } from "@/utils/OpenAI";
 import useModels from "../hooks/useModels";
 

@@ -20,6 +20,10 @@ export interface OpenAIConfig {
   presence_penalty?: number;
 }
 
+export interface PlaygroundConfig {
+  chatbot: boolean;
+}
+
 export interface OpenAIModel {
   id: string;
   name: string;

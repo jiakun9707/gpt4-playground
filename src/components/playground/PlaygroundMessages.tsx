@@ -4,11 +4,12 @@ import AddMessage from "./AddMessage";
 import PlaygroundMessage from "./PlaygroundMessage";
 import { usePlayground } from "@/context/PlaygroundProvider";
 import { MdOutlineForum } from "react-icons/md";
+import ToggleButton from "../input/Button";
 
 type Props = {};
 
 export default function PlaygroundMessages({}: Props) {
-  const { toggleShowConversations } = usePlayground();
+  const { toggleShowConversations, toggleChatbotMode } = usePlayground();
   const { messages, loading, submit } = useOpenAI();
   const messageContainer = React.useRef<HTMLDivElement>(null);
   const [prevMessageLength, setPrevMessageLength] = React.useState(0);
@@ -99,6 +100,13 @@ export default function PlaygroundMessages({}: Props) {
         >
           <MdOutlineForum />
         </button>
+        //TODO：添加了切换模式按钮，但是功能还没有添加
+        <ToggleButton 
+          labelOn="Chatbot Mode"
+          labelOff="Module Mode"
+          initialActive={true}
+          onToggle={toggleChatbotMode}
+        />
       </div>
     </div>
   );
