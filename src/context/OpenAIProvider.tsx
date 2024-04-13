@@ -273,7 +273,7 @@ export default function OpenAIProvider({ children }: PropsWithChildren) {
           };
           
           if (!chatbotMode) {
-            messages_ = messages.slice(-1);
+            messages_ = messages_.slice(-1);
             if (messages_[0].role !== "user") {
               throw new Error("Role should be user.");
             }
@@ -330,10 +330,8 @@ export default function OpenAIProvider({ children }: PropsWithChildren) {
         });
 
         while (!done) {
-          console.log("Reading...", reader);
           // reader.releaseLock();
           const { value, done: doneReading } = await reader.read();
-          console.log(value, doneReading);
           done = doneReading;
           const chunkValue = decoder.decode(value);
           message.content += chunkValue;
@@ -382,7 +380,7 @@ export default function OpenAIProvider({ children }: PropsWithChildren) {
   );
 
   const [chatbotMode, setChatbotMode] = React.useState(false);
-  console.log("chatbotMode:", chatbotMode);
+
   const toggleChatbotMode = () => {
     setChatbotMode(!chatbotMode);
   };
