@@ -47,7 +47,7 @@ const defaultContext = {
   submit: () => {},
   loading: true,
   error: "",
-  chatbotMode: false,
+  chatbotMode: true,
   setChatbotMode: (mode: boolean) => {},
   toggleChatbotMode: () => {},
 };
@@ -382,7 +382,7 @@ export default function OpenAIProvider({ children }: PropsWithChildren) {
   );
 
   const [chatbotMode, setChatbotMode] = React.useState(false);
-
+  console.log("chatbotMode:", chatbotMode);
   const toggleChatbotMode = () => {
     setChatbotMode(!chatbotMode);
   };

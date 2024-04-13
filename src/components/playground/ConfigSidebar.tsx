@@ -81,7 +81,7 @@ export default function ConfigSidebar({}: Props) {
       <ToggleButton 
         labelOn="Chatbot Mode"
         labelOff="Module Mode"
-        initialActive={true}
+        initialActive={chatbotMode}
         onToggle={()=>{toggleChatbotMode();console.info("chatbot mode:", chatbotMode)}}
       />
     </div>
