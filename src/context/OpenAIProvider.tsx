@@ -379,7 +379,7 @@ export default function OpenAIProvider({ children }: PropsWithChildren) {
     [submit]
   );
 
-  const [chatbotMode, setChatbotMode] = React.useState(false);
+  const [chatbotMode, setChatbotMode] = React.useState(true);
 
   const toggleChatbotMode = () => {
     setChatbotMode(!chatbotMode);
