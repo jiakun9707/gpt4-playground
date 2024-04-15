@@ -8,6 +8,8 @@ import ButtonContainer from "./buttons/ButtonContainer";
 import Conversations from "./conversation/Conversations";
 import ApiKey from "./buttons/ApiKey";
 import CurrentModel from './buttons/CurrentModel';
+import ExportDataComponent from "@/components/data/ExportData";
+import ImportDataComponent from "@/components/data/ImportData";
 
 type Props = {};
 
@@ -43,6 +45,9 @@ export default function ChatSidebar({}: Props) {
             <MdDeleteOutline />
             Clear Conversations
           </ButtonContainer>
+          
+          {/* <ExportDataComponent data={data} /> */}
+          <ImportDataComponent onDataImported={(data)=>{console.log(data)}} />
 
           <ThemeButton />
         </div>
