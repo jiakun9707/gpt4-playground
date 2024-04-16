@@ -10,12 +10,14 @@ import ApiKey from "./buttons/ApiKey";
 import CurrentModel from './buttons/CurrentModel';
 import ExportDataComponent from "@/components/data/ExportData";
 import ImportDataComponent from "@/components/data/ImportData";
+import { useLocalStorageData } from "@/components/hooks/useLocalStorageData";
 
 type Props = {};
 
 export default function ChatSidebar({}: Props) {
   const { clearConversations } = useOpenAI();
-
+  const chatData = useLocalStorageData("pg-history");
+  console.log("chatData", chatData)
   return (
     <div className="dark left-0 top-0 h-full max-h-screen flex-col bg-gray-900 text-primary md:fixed md:flex md:w-[260px]">
       <div className="flex h-full flex-col items-stretch p-2">
@@ -45,8 +47,9 @@ export default function ChatSidebar({}: Props) {
             <MdDeleteOutline />
             Clear Conversations
           </ButtonContainer>
-          
-          {/* <ExportDataComponent data={data} /> */}
+
+
+          <ExportDataComponent data={chatData} />
           <ImportDataComponent onDataImported={(data)=>{console.log(data)}} />
 
           <ThemeButton />
