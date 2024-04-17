@@ -21,7 +21,24 @@ const ImportDataComponent: React.FC<ImportDataComponentProps> = ({ onDataImporte
             throw new Error("No result");
           }
           const newData = JSON.parse(e.target.result as string);
-          onDataImported(newData);
+          
+          // Merge with existing data in localStorage
+          const existingDataRaw = localStorage.getItem('pg-history');
+          const existingData = existingDataRaw ? JSON.parse(existingDataRaw) : {};
+          
+          // Only add non-duplicate keys
+          const mergedData = {...existingData};
+          Object.keys(newData).forEach(key => {
+            if (!existingData.hasOwnProperty(key)) {
+              mergedData[key] = newData[key];
+            }
+          });
+          // Save the merged data back to localStorage
+          localStorage.setItem('pg-history', JSON.stringify(mergedData));
+          onDataImported(mergedData); // Optionally trigger a callback with the new data
+          alert('Data imported successfully!');
+          //flash page
+          window.location.reload();
         } catch (error) {
           alert("Invalid JSON file");
           setFileName(null); // Reset file name if there is an error
@@ -48,6 +65,7 @@ const ImportDataComponent: React.FC<ImportDataComponentProps> = ({ onDataImporte
     </div>
   );
 };
+
 
 export default ImportDataComponent;
 

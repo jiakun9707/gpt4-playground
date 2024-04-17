@@ -17,7 +17,6 @@ type Props = {};
 export default function ChatSidebar({}: Props) {
   const { clearConversations } = useOpenAI();
   const chatData = useLocalStorageData("pg-history");
-  console.log("chatData", chatData)
   return (
     <div className="dark left-0 top-0 h-full max-h-screen flex-col bg-gray-900 text-primary md:fixed md:flex md:w-[260px]">
       <div className="flex h-full flex-col items-stretch p-2">
@@ -43,16 +42,8 @@ export default function ChatSidebar({}: Props) {
             <MdBuild />
             Playground
           </Link>
-          <ButtonContainer onClick={clearConversations}>
-            <MdDeleteOutline />
-            Clear Conversations
-          </ButtonContainer>
 
-
-          <ExportDataComponent data={chatData} />
-          <ImportDataComponent onDataImported={(data)=>{console.log(data)}} />
-
-          <ThemeButton />
+          <RollComponent clearConversations={clearConversations} chatData={chatData} />
         </div>
 
         <Github />
@@ -63,3 +54,33 @@ export default function ChatSidebar({}: Props) {
     </div>
   );
 }
+
+// 定义 Props 类型
+interface RollComponentProps {
+  clearConversations: () => void;
+  chatData: any; // 请根据实际数据结构定义更精确的类型
+}
+
+const RollComponent: React.FC<RollComponentProps> = ({ clearConversations, chatData }) => {
+  // 定义内联样式
+  const scrollablePanelStyle: React.CSSProperties = {
+    height: '100px', // 控制面板的高度
+    overflowY: 'auto', // 启用垂直滚动
+    border: '1px solid #ccc', // 添加边框
+    padding: '10px', // 添加内边距
+  };
+
+  return (
+    <div style={scrollablePanelStyle}>
+      <ButtonContainer onClick={clearConversations}>
+        <MdDeleteOutline />
+        Clear Conversations
+      </ButtonContainer>
+
+      <ExportDataComponent data={chatData} />
+      <ImportDataComponent onDataImported={(data: any) => console.log(data)} />
+
+      <ThemeButton />
+    </div>
+  );
+};
